@@ -1,0 +1,156 @@
+Es tracta de programar una xarxa social on compartir missatges curts semblant a Tweeter. Per fer-ho usarem:
+
+    AngularJS per a programar el frontend
+    Bootstrap per a formatejar la GUI
+    Firebase (AngularFire) per a crear el backend i emmagatzemar les dades.
+
+
+Primera fase
+
+1) Crearerm el funcionament bàsic de l'aplicació amb les següents característiques:
+
+    Enviar tweets amb un nom d'usuari associat. No hi ha autenticació d'usuari.
+    Llegir tots els tweets enviats.
+
+
+Descripció del backend FireBase:
+
+URL arrel:
+
+https://ecaibtweet.firebaseio.com/
+
+URL tweets:
+
+https://ecaibtweet.firebaseio.com/tweets/
+
+URL tweets:
+
+https://ecaibtweet.firebaseio.com/users/
+Arbre JSON: (els IDs seran generats automàticament per FireBase al insertar un tweet usant el mètode push())
+
+"ecaibtweet": {
+  "tweets": {
+    "ID1": {
+      "user": "rcc",
+      "text": "El meu primer #ecaibtweet"
+    },
+    "ID2": {
+      "user": "rcc",
+      "text": "Hola món #ecaibtweet"
+    }
+  },
+  users: {
+    "rcc": {
+      "name": "Ramon Casamajó Canals",
+      "description": "Professor de cicles d'informàtica",
+  }
+}
+
+2) Afegir a l'aplicació (de moment ho podem fer a la mateixa pantalla) la funcionalitat de crear un usuari. Al fer-ho s'insertarà l'usuari nou a la branca ecaibtweet.firebaseio.com/users/ de la BBDD FireBase.
+
+3) Al escriure un tweet l'aplicació comprovarà si l'usuari existeix. Si no existeix no podrem enviar el tweet.
+
+
+Segona fase
+
+Per implementar el seguiment d'usuaris canviarem l'estructura de la base de dades per a fer l'accés més eficient:
+
+"ecaibtweet": {
+  users: {
+    "admin": {
+        "name": "Administrador",
+        "description": "Administrador",
+        "following": {},
+        "tweets": {}
+    },
+    "rcc": {
+        "name": "Ramon Casamajó Canals",
+        "description": "Professor de cicles d'informàtica",
+        "following": {
+          "ID1": {"idUser": "admin"},
+          "ID2": {"idUser": "silvia"}
+        },
+        "tweets": {
+          "ID3": {
+            "text": "El meu primer #ecaibtweet"
+          },
+          "ID4": {
+            "text": "Hola món #ecaibtweet"
+          }
+        }
+    },
+    "silvia": {
+        "name": "Silvia Cucurella",
+        "description": "Musician",
+        "following": {
+          "ID5": {"idUser": "admin"},
+          "ID6": {"idUser": "rcc"}
+        },
+        "tweets": {
+          "ID7": {
+            "text": "Hola a tothom!"
+          }
+        }
+    }
+  }
+}
+
+On tots els ID són generats per FireBse al insertar.
+
+Caldrà també introduir un usuari en algun control de l'aplicació per a poder recuperar la llista de tweets dels usuaris seguits i per a insertar nous tweets.
+
+La llista d'usuaris seguits la podeu introduir a mà a FireBase com a pas previ a implementar.ho a l'aplicació.
+
+
+-----------------------------------
+Navigation Bar
+            <nav class="navbar navbar-default">
+                <div class="container-fluid">
+                    <!-- Brand and toggle get grouped for better mobile display -->
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                            <span class="sr-only">Toggle navigation</span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                        <a class="navbar-brand" href="#">Tweet Poblenou</a>
+                    </div>
+
+                    <!-- Desplegable navbar -->
+                    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                        <ul class="nav navbar-nav">
+                            <li class="active"><a href="./index.html">Chat <span class="sr-only">(current)</span></a></li>
+                            <li><a href="#">Crear Usuari</a></li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Opcions <span class="caret"></span></a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="./sections/FAQ.html">FAQ</a></li>
+                                    <li><a href="./sections/about.html">About</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                        <!-- Formulario de busqueda -->
+                        <form class="navbar-form navbar-left" role="search">
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="Cercar">
+                            </div>
+                            <button type="submit" class="btn btn-default">Envia</button>
+                        </form>
+                        <ul class="nav navbar-nav navbar-right">
+                            <li><a href="http://virtual.ecaib.org/" target="_blank">ECAIB</a></li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="#">Action</a></li>
+                                    <li><a href="#">Another action</a></li>
+                                    <li><a href="#">Something else here</a></li>
+                                    <li role="separator" class="divider"></li>
+                                    <li><a href="#">Separated link</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>

@@ -2,10 +2,23 @@
  * Created by 46465442z on 19/02/16.
  */
 
-app.controller("Tweet", ["$scope", "chatMessages",
+app.controller("Tweet", ["$scope", "chatMessages", "getUser", "getUserTweets",
     // Enviamos nuestr chatMessages al controller
-    function($scope, chatMessages) {
-        $scope.user = "Mireia Fernández";
+    function($scope, chatMessages,getUser, getUserTweets) {
+        //$scope.user = "Enric";
+
+        $scope.setUser = function() {
+            $scope.userId = $scope.usuari;
+            //$scope.usuari = $scope.usuari;
+            var dades = getUser($scope.userId);
+            $scope.userName = dades.nom;
+            $scope.userDesc = dades.desc;
+            $scope.userTweets = getUserTweets($scope.userId);
+            $scope.followings = getFollowings($scope.userId);
+            $scope.followingTweets = getFollowingTweets($scope.userId);
+
+            console.log("tweets: "+$scope.userTweets);
+        };
 
         // anyadimos el array de chatMessages al scope que usaremos en nuestro ng-repeat
         $scope.messages = chatMessages;
@@ -42,5 +55,26 @@ app.factory("chatMessages", ["$firebaseArray",
 
         // this uses AngularFire to create the synchronized array
         return $firebaseArray(ref);
+    }
+]);
+
+app.factory("getUser", ["$firebaseObject",
+    function($firebaseObject) {
+        return function(usuari) {
+            var ref = new Firebase("https://ecaibtweet.firebaseio.com/users");
+
+            return {nom: $firebaseObject(ref.child(usuari).child("name")),
+                desc: $firebaseObject(ref.child(usuari).child("description")),
+                userTweets: $firebaseObject(ref.child(usuari).child("tweets"))};
+        };
+    }
+]);
+app.factory("getUserTweets", ["$firebaseArray",
+    function($firebaseArray) {
+        return function(usuari) {
+            // create a reference to the database location where we will store our data
+            var ref = new Firebase("https://ecaibtweet.firebaseio.com/users");
+            return $firebaseArray(ref.child(usuari).child("tweets"));
+        };
     }
 ]);
